@@ -50,6 +50,21 @@ def malicious_rate_exp(rates, sim_num, peer_num, min_cat_peer_rate, cats_num, tr
     return res_dict
 
 
+def malicious_rate_exp_eigen(rates, sim_num, peer_num, min_cat_peer_rate, cats_num, trust_upd, pre_trusted_rate, exp_iter=5):
+    res_dict = {'rates': rates, 'simple': [], 'eigen': [], 'honest': [], 'peer': [], 'abs': [], 'peer_eigen': [], 'peer_fuzzy': []}
+    for rate in rates:
+        t = []
+        for i in range(exp_iter):
+            eigen = EigenTrustEnv(num_peers=peer_num, malicious_rate=rate, pre_trusted_rate=pre_trusted_rate,
+                                  min_cat_peer_rate=min_cat_peer_rate, num_cats=cats_num, trust_upd=trust_upd)
+            eigen.simulate(sim_num)
+            t.append(count_stat(eigen.interactions))
+        res_dict['eigen'].append(np.mean(t))
+
+        print(f'Rate {rate:.3f} completed!')
+
+    return res_dict
+
 def convergence_exp(nums, sim_num, rate, min_cat_peer_rate, cats_num, trust_upd, pre_trusted_rate, exp_iter=5):
     res_dict = {'nums': nums, 'simple': [], 'eigen': [], 'honest': [], 'peer': [], 'abs': [], 'peer_eigen': [], 'peer_fuzzy': []}
     for num in nums:
